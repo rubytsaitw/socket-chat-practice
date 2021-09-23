@@ -21,10 +21,17 @@ app.get('/', (req, res) => {
 // });
 
 io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-  });
-});
+  console.log(socket.id)
+  // listen to send-message from client
+  socket.on('send-message', message => {
+    console.log('send-message', message)
+    // A. send message to client (all sockets)
+    // io.emit('receive-message', message)
+    // B. Send message to all other clinets
+    // (from this socket, broadcast to all other sockets)
+    socket.broadcast.emit('receive-message', message)
+  })
+})
 
 server.listen(3000, () => {
   console.log(`listening on *: ${PORT}`);
