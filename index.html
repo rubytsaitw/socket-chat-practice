@@ -98,22 +98,29 @@
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const message = messageInput.value
+    const room = roomInput.value
     if (message) {
       displayMessage(message)
 
-      socket.emit('send-message', message);
+      socket.emit('send-message', message, room);
       messageInput.value = '';
     }
+  });
+
+  socket.on('connect', () => {
+    displayMessage(`You connected with id: ${socket.id}`)
   });
 
   socket.on('receive-message', (message) => {
     displayMessage(message)
   });
 
-  // listen on event when connected to server
-  // socket.on('connect', () => {
-  //   displayMessage(`You connected with id: ${socket.id}`)
-  // })
+joinRoomButton.addEventListener('click', () => {
+  const room = roomInput.value
+  socket.emit('join-room', room, message => {
+    displayMessage(message)
+  })
+})
 
   function displayMessage(msg) {
     const item = document.createElement('li');
